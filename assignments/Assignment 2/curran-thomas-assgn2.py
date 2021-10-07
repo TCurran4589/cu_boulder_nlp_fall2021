@@ -16,6 +16,20 @@ with open('part1/curran-thomas-assgn2-part1.csv', 'r') as f:
 
 
 def training_split(inputs, outputs, train=.8, test=.2):
+    """[summary]
+
+    Args:
+        inputs ([2d array]): the set of features you want train your model on
+        outputs ([1d array]): the set of outcomes to predict based on features
+        train (float, optional): Proportion of inputs in dataset to include in training data Defaults to .8.
+        test (float, optional): Proportion of outcomes dataset to include in the Defaults to .2.
+
+    Returns:
+        xtrain: 2d array of training data features
+        ytrain: 1d array of outcomes to
+        ytest: 1d array of outcomes to test
+        xtest: 2d array of inputs to test model
+    """
     if train + test != 1.0:
         return 'must add up to 1'
 
@@ -42,26 +56,66 @@ def training_split(inputs, outputs, train=.8, test=.2):
 
 
 def sigmoid(w, x):
+    """[summary]
+    Sigmoid function is used to predict binary outcome based on a set of features and weights.
+    Args:
+        w (list): set of weights associated with model to predict outcome
+        x (list): set of features to test against weights to predict outcome
+
+    Returns:
+        float: returns singular sigmoid value
+    """
     z = np.dot(w, x)+w[-1]
     _sigmoid = 1 / (1 + np.exp(-1*z))
     return _sigmoid
 
 
 def gradient_vector(y, yhat, x):
+    """[summary]
+
+    * returns the gradient vector of losses to compute theta from previous weight vector
+    Args:
+        y (int): actual value of outcome based on data
+        yhat (float): predicted value of outcome based on (x) features
+        x (list): list of feature values from model
+
+    Returns:
+        list: returns the gradient of feature vector
+    """
     l_ce_vector = [(yhat-y)*x_i for x_i in x]
     return l_ce_vector
 
-
-def L_ce(y, yhat):
-    loss = -1*((y*np.log(yhat))+(1-y)*(np.log(1-yhat)))
-    return loss
-
-
 def calc_theta(w, g, lr=.1):
+    """[summary]
+    Calculates the updated theta values based on the freshly calculated gradients for a given
+    set of weights and features and predicted outcomes.
+
+    Args:
+        w (list): list of previous iteration's weights
+        g (list): list of current interation's gradient values based on features and predicted outcomes
+        lr (float, optional): learning rate to apply to list of gradients. Defaults to .1.
+
+    Returns:
+        [list]: returns list of updated weights to used for the next iteration of SGD
+    """
     return [round(w[i] - (lr*g[i]), 5) for i in range(0, len(g))]
 
 
 def sgd(inputs, outputs, lr=.1, n_epochs=100):
+    """[summary]
+    
+    Performs stochastic gradient descent for a set of inputs and outputs
+
+    Args:
+        inputs (list]): 2d list of features to train stochastic gradient descent on
+        outputs (list): list of 1d outcomes associated with each feature vector
+        lr (float, optional): learning rate to be used in calculation of theta. Defaults to .1.
+        n_epochs (int, optional): number of iterations. Defaults to 100.
+
+    Returns:
+        _w (list): returns the optimal weights for logistic model
+        epoch_losses (list): returns the total loss for each epoch to be used for reporting
+    """
 
     _w = [0] * len(inputs[0])
     _i = np.random.choice(np.arange(0, len(inputs)),
@@ -88,15 +142,15 @@ def sgd(inputs, outputs, lr=.1, n_epochs=100):
 xtrain, ytrain, xtest, ytest = training_split(X, Y)
 coef, losses = sgd(X, Y)
 
-predictions = [[round(sigmoid(coef, X[i])), Y[i], round(
-    sigmoid(coef, X[i])) == Y[i]] for i in range(0, len(X))]
+#predictions = [[round(sigmoid(coef, X[i])), Y[i], round(
+#    sigmoid(coef, X[i])) == Y[i]] for i in range(0, len(X))]
 
-df = pd.DataFrame(predictions, columns=['predicted', 'actual', 'correct'])
+#df = pd.DataFrame(predictions, columns=['predicted', 'actual', 'correct'])
 
-np.mean(df['correct'])
+#print(np.mean(df['correct']))
 
 #####################################################################################################################
-# Implement Model on 
+# Implement Model on test data provided in canvas
 #####################################################################################################################
 
 with open('part1/assgn2-testset-reviews.csv', 'r') as f:
