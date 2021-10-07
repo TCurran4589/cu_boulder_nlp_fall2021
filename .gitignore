@@ -1,4 +1,5 @@
 .ipynb_checkpoints/
 scrap_files/
-.ipynb
-.gdoc
+*.ipynb
+*.gdoc
+*.g*
