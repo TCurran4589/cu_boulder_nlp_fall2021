@@ -6,16 +6,16 @@ import re
 #####################################################################################################################
 # Import Relevant files for training and pre-processing
 #####################################################################################################################
-with open('hotelposT-train.txt', 'r') as f:
+with open('data/hotelposT-train.txt', 'r') as f:
     positive_reviews_raw = f.readlines()
 
-with open('hotelnegT-train.txt', 'r') as f:
+with open('data/hotelnegT-train.txt', 'r') as f:
     negative_reviews_raw = f.readlines()
 
-with open('positive-words.txt', 'r') as f:
+with open('data/positive-words.txt', 'r') as f:
     positive_words_raw = f.readlines()
 
-with open('negative-words.txt', 'r') as f:
+with open('data/negative-words.txt', 'r') as f:
     negative_words_raw = f.readlines()
 
 # file constants
@@ -103,7 +103,7 @@ def pronouns_used(text, pronouns):
     return n_pronouns_used
 
 
-def create_review_corpus(reviews, sentiment_class, dictionary_to_append_to):
+def create_review_corpus(reviews, dictionary_to_append_to, sentiment_class=None,):
     for review in reviews:
         idnum, review_text = extract_id(review)
         dictionary_to_append_to[idnum]={
@@ -129,3 +129,13 @@ create_review_corpus(negative_reviews_raw, sentiment_class=0, dictionary_to_appe
 review_csv = pd.DataFrame().from_dict(reviews, orient='index').reset_index().rename(columns={'index':'id'}).drop('review_text', axis=1)
 review_csv.to_csv('curran-thomas-assgn2-part1.csv', index=False, header=False)
 
+
+with open('data/HW2-testset.txt', 'r') as f:
+    testset_raw = f.readlines()
+
+testset_reviews = {}
+
+create_review_corpus(testset_raw, dictionary_to_append_to=testset_reviews)
+
+testset_df = pd.DataFrame().from_dict(testset_reviews).T.reset_index().drop('review_text', axis=1)
+testset_df.to_csv('assgn2-testset-reviews.csv', header=False, index=False)

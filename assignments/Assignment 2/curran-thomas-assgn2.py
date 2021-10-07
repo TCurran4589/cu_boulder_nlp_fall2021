@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # set random seed
 np.random.seed(7)
 
-with open('curran-thomas-assgn2-part1.csv', 'r') as f:
+with open('part1/curran-thomas-assgn2-part1.csv', 'r') as f:
     d = csv.reader(f, delimiter=',')
     data = [[float(x) for x in row[1:]] for row in d]
     Y = [i[0] for i in data]
@@ -86,11 +86,46 @@ def sgd(inputs, outputs, lr=.1, n_epochs=100):
 
 
 xtrain, ytrain, xtest, ytest = training_split(X, Y)
-coef, losses = sgd(xtrain, ytrain)
+coef, losses = sgd(X, Y)
 
-predictions = [[round(sigmoid(coef, xtest[i])), ytest[i], round(
-    sigmoid(coef, xtest[i])) == ytest[i]] for i in range(0, len(xtest))]
+predictions = [[round(sigmoid(coef, X[i])), Y[i], round(
+    sigmoid(coef, X[i])) == Y[i]] for i in range(0, len(X))]
 
 df = pd.DataFrame(predictions, columns=['predicted', 'actual', 'correct'])
 
 np.mean(df['correct'])
+
+#####################################################################################################################
+# Implement Model on 
+#####################################################################################################################
+
+with open('part1/assgn2-testset-reviews.csv', 'r') as f:
+    d = csv.reader(f, delimiter=',')
+    IDs = []
+    Y = []
+    X = []
+    for row in d:
+        IDs.append(row[0])
+        Y.append(None)
+        X.append([float(row[i]) for i in range(2, len(row))])
+        
+    for x in X:
+        x.append(0)
+
+outcomes = []
+for i in range(0, len(X)):
+    prediction = round(sigmoid(coef, X[i]))
+
+    if prediction == 1:
+        prediction_value = 'POS'
+    else:
+        prediction_value = 'NEG'
+
+    outcomes.append([IDs[i], prediction_value])
+
+pprint(outcomes)
+
+with open('curran-thomas-assgn2.txt', 'w') as f:
+    for value in outcomes:
+        f.write(", ".join(value)+"\n")
+    
